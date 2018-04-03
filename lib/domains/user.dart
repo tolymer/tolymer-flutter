@@ -51,4 +51,23 @@ class User {
     var user = await _get('/current_user');
     return new User(id: user['id'], name: user['name']);
   }
+
+  Future<List<Group>> getGroups() async {
+    var groups = await _get('/current_user/groups');
+    return groups.map((group) {
+      return new Group(
+        id: group['id'],
+        name: group['name'],
+        description: group['description'],
+      );
+    }).toList();
+  }
+}
+
+class Group {
+  Group({ this.id, this.name, this.description });
+
+  final int id;
+  final String name;
+  final String description;
 }
