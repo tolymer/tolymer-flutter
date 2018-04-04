@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../domains/api_client.dart';
 import '../domains/user.dart';
 import 'my_page.dart';
 import 'login_page.dart';
@@ -22,19 +23,28 @@ class _AppState extends State<App> {
     setState(() => _currentComponent = component);
   }
 
+  void _displayLoginPage() {
+    _updateComponent(new LoginPage(onLoggedIn: _handleLoggedIn));
+  }
+
+  void _displayMyPage(User user) {
+    _updateComponent(new MyPage(user: user));
+  }
+
   Future<void> _setupComponent() async {
-    var token = await User.getSavedToken();
+    var token = await APIClient.getSavedToken();
     if (token == null) {
-      _updateComponent(new LoginPage(onLoggedIn: _handleLoggedIn));
+      _displayLoginPage();
     } else {
       var user = await User.getCurrentUser();
-      _updateComponent(new MyPage(user: user));
+      _displayMyPage(user);
     }
   }
 
   @override
   void initState() {
     super.initState();
+    APIClient.onFailAuth(() { _displayLoginPage(); });
     this._setupComponent();
   }
 

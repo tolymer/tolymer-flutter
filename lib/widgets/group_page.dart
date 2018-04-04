@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../domains/user.dart';
+import '../domains/group.dart';
 
 class GroupPage extends StatefulWidget {
   GroupPage({ Key key, this.group }) : super(key: key);

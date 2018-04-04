@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../domains/api_client.dart';
 import '../domains/user.dart';
 
 typedef void LoggedInCallback(User user);
@@ -17,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = new TextEditingController();
 
   _handlePressed() async {
-    var loggedIn = await User.login(_nameController.text, _passwordController.text);
+    var loggedIn = await APIClient.login(_nameController.text, _passwordController.text);
     if (!loggedIn) {
       print('Login faild');
     }
