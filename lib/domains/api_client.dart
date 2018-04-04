@@ -3,11 +3,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:async';
 
-typedef void onFailAuthCallback();
+typedef void OnFailAuthCallback();
 
 class APIClient {
   static String endpoint;
-  static onFailAuthCallback _onFailAuthCallback;
+  static OnFailAuthCallback _onFailAuthCallback;
 
   static get(String path, { auth: true }) async {
     var url = '$endpoint$path';
@@ -57,7 +57,7 @@ class APIClient {
     return true;
   }
 
-  static onFailAuth(onFailAuthCallback callback) {
+  static onFailAuth(OnFailAuthCallback callback) {
     _onFailAuthCallback = callback;
   }
 
