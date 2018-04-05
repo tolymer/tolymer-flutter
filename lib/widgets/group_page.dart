@@ -68,7 +68,6 @@ class _GroupPageState extends State<GroupPage> with SingleTickerProviderStateMix
   _eventListView() {
     Iterable<Widget> listTiles = _events.map((event) {
       return new ListTile(
-        leading: new Icon(Icons.explicit),
         title: new Text(event.title),
         subtitle: new Text(event.date),
         onTap: () {
