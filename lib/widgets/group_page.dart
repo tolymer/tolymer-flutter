@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'new_event_page.dart';
+import 'event_page.dart';
 import '../domains/group.dart';
 import '../domains/event.dart';
 import '../domains/user.dart';
@@ -71,8 +72,8 @@ class _GroupPageState extends State<GroupPage> with SingleTickerProviderStateMix
         title: new Text(event.title),
         subtitle: new Text(event.date),
         onTap: () {
-          // var route = new MaterialPageRoute(builder: (context) => new EventPage(event: event));
-          // Navigator.of(context).push(route);
+          var route = new MaterialPageRoute(builder: (context) => new EventPage(event: event));
+          Navigator.of(context).push(route);
         },
       );
     });
