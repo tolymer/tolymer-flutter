@@ -30,7 +30,7 @@ class _GroupPageState extends State<GroupPage> {
 
   _openNewEventPage() {
     Navigator.push(context, new MaterialPageRoute<DismissDialogAction>(
-      builder: (BuildContext context) => new NewEventPage(),
+      builder: (BuildContext context) => new NewEventPage(group: widget.group),
       fullscreenDialog: true,
     ));
   }

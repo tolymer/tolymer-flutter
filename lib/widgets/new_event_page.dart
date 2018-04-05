@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../domains/group.dart';
+import '../domains/user.dart';
 
 enum DismissDialogAction {
   cancel,
@@ -19,8 +20,44 @@ class NewEventPage extends StatefulWidget {
 
 class _NewEventPageState extends State<NewEventPage> {
   final TextEditingController _titleController = new TextEditingController();
+  final TextEditingController _descriptionController = new TextEditingController();
+
   DateTime _date = new DateTime.now();
-  List<bool> _memberChecked = [true, true, true, true];
+  Map<int, bool> _memberChecked = {};
+  List<User> _members = [];
+
+  void _setup() async {
+    var members = await widget.group.getMembers();
+    setState(() {
+      _members = members;
+      members.forEach((user) {
+        _memberChecked[user.id] = true;
+      });
+    });
+  }
+
+  void _handleSave() async {
+    var event = await widget.group.createEvent({
+      'title': _titleController.text,
+      'description': _descriptionController.text,
+      'date': '${_date.year}-${_date.month}-${_date.day}'
+    });
+
+    List<int> userIds = [];
+    _memberChecked.forEach((id, checked) {
+      if (checked) {
+        userIds.add(id);
+      }
+    });
+    await event.addMembers(userIds);
+    Navigator.pop(context, DismissDialogAction.save);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _setup();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +69,7 @@ class _NewEventPageState extends State<NewEventPage> {
           new FlatButton(
             child: new Text('SAVE', style: theme.textTheme.body1.copyWith(color: Colors.white)),
             onPressed: () {
-              Navigator.pop(context, DismissDialogAction.save);
+              _handleSave();
             }
           )
         ]
@@ -43,29 +80,22 @@ class _NewEventPageState extends State<NewEventPage> {
             controller: _titleController,
             decoration: new InputDecoration(hintText: 'Event Title'),
           ),
+          new TextField(
+            controller: _descriptionController,
+            decoration: new InputDecoration(hintText: 'Event Description'),
+          ),
           new _DatePicker(
             selectedDate: _date,
             selectDate: (DateTime date) {
               _date = date;
             }
           ),
-          new ListTile(
-            leading: new Checkbox(value: _memberChecked[0], onChanged: (v) => _memberChecked[0] = v),
-            title: new Text('hokaccha'),
-          ),
-          new ListTile(
-            leading: new Checkbox(value: _memberChecked[1], onChanged: (v) => _memberChecked[1] = v),
-            title: new Text('1000ch'),
-          ),
-          new ListTile(
-            leading: new Checkbox(value: _memberChecked[2], onChanged: (v) => _memberChecked[2] = v),
-            title: new Text('hilok'),
-          ),
-          new ListTile(
-            leading: new Checkbox(value: _memberChecked[3], onChanged: (v) => _memberChecked[3] = v),
-            title: new Text('tan_yuki'),
-          ),
-        ],
+        ]..addAll(_members.map((user) {
+          return new ListTile(
+            leading: new Checkbox(value: _memberChecked[user.id], onChanged: (v) => setState(() { _memberChecked[user.id] = v; })),
+            title: new Text(user.name),
+          );
+        })),
       ),
     );
   }
