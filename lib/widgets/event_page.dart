@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'new_game_page.dart';
 import '../domains/group.dart';
 import '../domains/event.dart';
 import '../domains/user.dart';
@@ -102,5 +103,9 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
   }
 
   _openNewGamePage() {
+    Navigator.push(context, new MaterialPageRoute<DismissDialogAction>(
+      builder: (BuildContext context) => new NewGamePage(event: widget.event, members: _members),
+      fullscreenDialog: true,
+    ));
   }
 }

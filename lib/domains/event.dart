@@ -20,4 +20,8 @@ class Event {
   Future<void> addMembers(List<int> ids) async {
     await APIClient.post('/events/$id/members', { 'user_ids': ids });
   }
+
+  Future<void> createGame(scores) async {
+    await APIClient.post('/events/$id/games', { 'scores': scores });
+  }
 }
