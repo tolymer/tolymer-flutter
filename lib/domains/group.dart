@@ -15,13 +15,22 @@ class Group {
     return users.map((user) => new User(id: user['id'], name: user['name'])).toList();
   }
 
+  Future<List<Event>> getEvents() async {
+    var events = await APIClient.get('/groups/$id/events');
+    return events.map((event) => _toEvent(event)).toList();
+  }
+
   Future<Event> createEvent(params) async {
     var res = await APIClient.post('/groups/$id/events', params);
+    return _toEvent(res);
+  }
+
+  Event _toEvent(hash) {
     return new Event(
-      id: res['id'],
-      title: res['title'],
-      description: res['description'],
-      date: res['date'],
+      id: hash['id'],
+      title: hash['title'],
+      description: hash['description'],
+      date: hash['date'],
     );
   }
 }
