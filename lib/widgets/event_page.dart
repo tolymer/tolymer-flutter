@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'new_game_page.dart';
-import '../domains/group.dart';
+import '../domains/game.dart';
 import '../domains/event.dart';
 import '../domains/user.dart';
 
@@ -16,11 +16,14 @@ class EventPage extends StatefulWidget {
 class _EventPageState extends State<EventPage> with SingleTickerProviderStateMixin {
   TabController _controller;
   List<User> _members = [];
+  List<Game> _games = [];
 
   _setup() async {
     var members = await widget.event.getMembers();
+    var games = await widget.event.getGames();
     setState(() {
       _members = members;
+      _games = games;
     });
   }
 
@@ -100,6 +103,37 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
   }
 
   _gamesTab() {
+    if (_members.isEmpty) {
+      return new Container();
+    }
+
+    List<DataColumn> columns = _members.map((user) {
+      return new DataColumn(label: new Text(user.name));
+    }).toList();
+
+    Map<int, int> totalPointByUserId = {};
+    _members.forEach((user) {
+      totalPointByUserId[user.id] = 0;
+    });
+    List<DataRow> rows = _games.map((game) {
+      var pointByUserId = {};
+      game.scores.forEach((score) {
+        pointByUserId[score['user_id']] = score['point'];
+        totalPointByUserId[score['user_id']] += score['point'];
+      });
+      var cells = _members.map((user) {
+        var text = new Text(pointByUserId[user.id].toString());
+        return new DataCell(text);
+      }).toList();
+      return new DataRow(cells: cells);
+    }).toList();
+    rows.add(
+      new DataRow(
+        cells: _members.map((user) => new DataCell(new Text(totalPointByUserId[user.id].toString()))).toList(),
+      )
+    );
+
+    return new DataTable(columns: columns, rows: rows);
   }
 
   _openNewGamePage() {

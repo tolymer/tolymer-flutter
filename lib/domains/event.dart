@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'api_client.dart';
 import 'user.dart';
+import 'game.dart';
 
 class Event {
   Event({ this.id, this.title, this.description, this.date });
@@ -23,5 +24,12 @@ class Event {
 
   Future<void> createGame(scores) async {
     await APIClient.post('/events/$id/games', { 'scores': scores });
+  }
+
+  Future<List<Game>> getGames() async {
+    var games = await APIClient.get('/events/$id/games');
+    return games.map((game) {
+      return new Game(id: game['id'], scores: game['scores']);
+    }).toList();
   }
 }
