@@ -107,15 +107,25 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
       return new Container();
     }
 
-    List<DataColumn> columns = _members.map((user) {
-      return new DataColumn(label: new Text(user.name));
-    }).toList();
+    List<TableRow> rows = [];
+
+    TableRow headRow = new TableRow(
+      children: _members.map((user) {
+        var text = new Text(user.name);
+        var container = new Container(
+          child: text,
+          padding: new EdgeInsets.only(top: 15.0, bottom: 15.0, left: 10.0, right: 10.0),
+          color: Colors.grey[200],
+        );
+        return new TableCell(child: container);
+      }).toList(),
+    );
 
     Map<int, int> totalPointByUserId = {};
     _members.forEach((user) {
       totalPointByUserId[user.id] = 0;
     });
-    List<DataRow> rows = _games.map((game) {
+    List<TableRow> scoreRows = _games.map((game) {
       var pointByUserId = {};
       game.scores.forEach((score) {
         pointByUserId[score['user_id']] = score['point'];
@@ -123,17 +133,32 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
       });
       var cells = _members.map((user) {
         var text = new Text(pointByUserId[user.id].toString());
-        return new DataCell(text);
+        var container = new Container(
+          child: text,
+          padding: new EdgeInsets.all(10.0),
+        );
+        return new TableCell(child: container);
       }).toList();
-      return new DataRow(cells: cells);
+      return new TableRow(children: cells);
     }).toList();
-    rows.add(
-      new DataRow(
-        cells: _members.map((user) => new DataCell(new Text(totalPointByUserId[user.id].toString()))).toList(),
-      )
+
+    TableRow totalRow = new TableRow(
+      children: _members.map((user) {
+        var text = new Text(totalPointByUserId[user.id].toString());
+        var container = new Container(
+          child: text,
+          padding: new EdgeInsets.all(10.0),
+          color: Colors.red[100],
+        );
+        return new TableCell(child: container);
+      }).toList(),
     );
 
-    return new DataTable(columns: columns, rows: rows);
+    rows.add(headRow);
+    rows.addAll(scoreRows);
+    rows.add(totalRow);
+
+    return new Table(children: rows);
   }
 
   _openNewGamePage() {
