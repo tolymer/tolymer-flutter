@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'new_game_page.dart';
 import '../domains/game.dart';
@@ -161,9 +162,16 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
     return new Table(children: rows);
   }
 
+  Future _handleCreateGame() async {
+    var games = await widget.event.getGames();
+    setState(() {
+      _games = games;
+    });
+  }
+
   _openNewGamePage() {
     Navigator.push(context, new MaterialPageRoute<DismissDialogAction>(
-      builder: (BuildContext context) => new NewGamePage(event: widget.event, members: _members),
+      builder: (BuildContext context) => new NewGamePage(event: widget.event, members: _members, onCreateGame: _handleCreateGame),
       fullscreenDialog: true,
     ));
   }

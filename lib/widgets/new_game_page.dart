@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../domains/group.dart';
 import '../domains/user.dart';
 import '../domains/event.dart';
 
@@ -10,11 +9,14 @@ enum DismissDialogAction {
   save,
 }
 
+typedef Future OnCreateGame();
+
 class NewGamePage extends StatefulWidget {
-  NewGamePage({ Key key, this.event, this.members }) : super(key: key);
+  NewGamePage({ Key key, this.event, this.members, this.onCreateGame }) : super(key: key);
 
   final Event event;
   final List<User> members;
+  final OnCreateGame onCreateGame;
 
   @override
   _NewGamePageState createState() => new _NewGamePageState();
@@ -29,6 +31,7 @@ class _NewGamePageState extends State<NewGamePage> {
       scores.add({ 'user_id': userId, 'point': int.parse(controller.text) });
     });
     await widget.event.createGame(scores);
+    await widget.onCreateGame();
     Navigator.pop(context, DismissDialogAction.save);
   }
 
